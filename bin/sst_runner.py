@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2014, 2015, 2016, 2019 Adam.Dybbroe
+# Copyright (c) 2014, 2015, 2016, 2019, 2020 Adam.Dybbroe
 
 # Author(s):
 
@@ -22,6 +22,10 @@
 
 """Posttroll runner for OSISAF SST post-processing
 """
+import logging
+import tempfile
+from datetime import timedelta, datetime
+from mpop.satellites import PolarFactory
 import os
 import ConfigParser
 import shutil
@@ -31,10 +35,6 @@ import posttroll.subscriber
 from posttroll.publisher import Publish
 from mpop.utils import debug_on
 debug_on()
-from mpop.satellites import PolarFactory
-from datetime import timedelta, datetime
-import tempfile
-import logging
 
 LOG = logging.getLogger(__name__)
 
@@ -115,7 +115,7 @@ def start_sst_processing(sst_file, message, **kwargs):
         LOG.warning("No end time in message!")
         end_time = None
 
-    if (message.data['platform_name'] in ['Suomi-NPP', ] and
+    if (message.data['platform_name'] in ['Suomi-NPP', 'NOAA-20', 'NOAA-21'] and
             message.data['instruments'] == 'viirs'):
 
         path, fname = os.path.split(urlobj.path)
