@@ -71,6 +71,10 @@ _DEFAULT_LOG_FORMAT = '[%(levelname)s: %(asctime)s : %(name)s] %(message)s'
 #METOPS = ['Metop-A', 'Metop-B', 'Metop-C']
 METOP_NAMES = ['metop02', 'metop01', 'metop03']
 
+VIIRS_PLATFORM_NAMES = {'NPP': 'Suomi-NPP',
+                        'NOAA20': 'NOAA-20',
+                        'NOAA21': 'NOAA-21'}
+
 INSTRUMENT_NAME = {}  # {'avhrr/3': 'avhrr'}
 
 
@@ -115,14 +119,14 @@ def start_sst_processing(sst_file, message, **kwargs):
         LOG.warning("No end time in message!")
         end_time = None
 
-    if (message.data['platform_name'] in ['Suomi-NPP', 'NOAA-20', 'NOAA-21'] and
+    platform_name = VIIRS_PLATFORM_NAMES.get(message.data['platform_name'], message.data['platform_name'])
+    if (platform_name in ['Suomi-NPP', 'NOAA-20', 'NOAA-21'] and
             message.data['instruments'] == 'viirs'):
 
         path, fname = os.path.split(urlobj.path)
         LOG.debug("path " + str(path) + " filename = " + str(fname))
 
         instrument = str(message.data['instruments'])
-        platform_name = message.data['platform_name']
         sst_file[scene_id] = os.path.join(path, fname)
 
     elif message.data['instruments'] == 'avhrr/3':
